@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class model 
@@ -100,7 +101,7 @@ public class model
         vertices = new List<Vector3>();
 
         //Front
-        vertices.Add(new Vector3(-4,5,0.5f)); //0
+        vertices.Add(new Vector3(-4, 5, 0.5f)); //0
         vertices.Add(new Vector3(2, 5, 0.5f)); //1
         vertices.Add(new Vector3(-4, 4, 0.5f)); //2
         vertices.Add(new Vector3(-3, 3, 0.5f)); //3
@@ -130,10 +131,74 @@ public class model
         vertices.Add(new Vector3(4, -4, 1.5f)); //25
         vertices.Add(new Vector3(-3, -6, 1.5f)); //26
         vertices.Add(new Vector3(2, -6, 1.5f)); //27
+
+
+
+        print_verts(vertices);
+
+        Vector3 axis = new Vector3(16, 0, 0);
+        axis.Normalize();
+        // Quaternion.AngleAxis(90, Vector3.up)
+        Matrix4x4 rotation_matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(-22, axis), Vector3.one);
+
+
+        print_matrix(rotation_matrix);
+
+
+        List<Vector3> image_after_rotation = get_image(vertices, rotation_matrix);
+
+        print_verts(image_after_rotation);
+
+
+
+
+        List<Vector3> get_image(List<Vector3> list_verts, Matrix4x4 transform_matrix)
+        {
+            List<Vector3> hold = new List<Vector3>();
+
+            foreach (Vector3 v in list_verts)
+            {
+                hold.Add(transform_matrix * v);
+            }
+            return hold;
+
+        }
+
+        void print_matrix(Matrix4x4 matrix)
+        {
+            string path = "Assets/test.txt";
+            //Write some text to the test.txt file
+            StreamWriter writer = new StreamWriter(path, true);
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector4 row = matrix.GetRow(i);
+                writer.WriteLine(row.x.ToString() + "   ,   " + row.y.ToString() + "   ,   " + row.z.ToString() + "   ,   " + row.w.ToString());
+
+
+            }
+
+            writer.Close();
+
+        }
+
+        void print_verts(List<Vector3> v_list)
+        {
+            string path = "Assets/test.txt";
+            //Write some text to the test.txt file
+            StreamWriter writer = new StreamWriter(path, true);
+            foreach (Vector3 v in v_list)
+            {
+                writer.WriteLine(v.x.ToString() + "   ,   " + v.y.ToString() + "   ,   " + v.z.ToString() + "   ,   ");
+
+            }
+            writer.Close();
+        }
     }
 
 
-    public GameObject CreateUnityGameObject()
+
+public GameObject CreateUnityGameObject()
 
             {
 
