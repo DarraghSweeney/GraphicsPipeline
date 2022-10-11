@@ -141,15 +141,48 @@ public class model
         // Quaternion.AngleAxis(90, Vector3.up)
         Matrix4x4 rotation_matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(-22, axis), Vector3.one);
 
-
         print_matrix(rotation_matrix);
-
 
         List<Vector3> image_after_rotation = get_image(vertices, rotation_matrix);
 
         print_verts(image_after_rotation);
 
 
+        //Scale
+
+        Vector3 Scale = new Vector3(5, 3, 2);
+
+
+        Matrix4x4 Scale_Matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Scale);
+
+        print_matrix(Scale_Matrix);
+
+        List<Vector3> image_after_scale = get_image(image_after_rotation, Scale_Matrix);
+
+        print_verts(image_after_scale);
+
+        //Transform
+
+        Vector3 Tranform = new Vector3(3, -3, 1);
+
+        Matrix4x4 Transformation_Matrix = Matrix4x4.TRS(Tranform, Quaternion.identity, Vector3.one);
+
+        print_matrix(Transformation_Matrix);
+
+        List<Vector3> image_after_Transformation = get_image(image_after_scale, Transformation_Matrix);
+
+        print_verts(image_after_Transformation);
+
+
+        //SingleMatrix
+
+        Matrix4x4 SingleMatrix = (Transformation_Matrix * Scale_Matrix * rotation_matrix);
+
+        print_matrix(SingleMatrix);
+
+        List<Vector3> image_after_all = get_image(vertices, SingleMatrix);
+
+        print_verts(image_after_all);
 
 
         List<Vector3> get_image(List<Vector3> list_verts, Matrix4x4 transform_matrix)
@@ -158,7 +191,8 @@ public class model
 
             foreach (Vector3 v in list_verts)
             {
-                hold.Add(transform_matrix * v);
+                Vector4 v2 = new Vector4(v.x, v.y, v.z, 1);
+                hold.Add(transform_matrix * v2);
             }
             return hold;
 
