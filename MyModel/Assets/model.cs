@@ -185,6 +185,27 @@ public class model
         print_verts(image_after_all);
 
 
+        Matrix4x4 ViewingMatrix = Matrix4x4.LookAt(new Vector3(18, 3, 50), (new Vector3(0, 16, 0).normalized), (new Vector3(1, 0, 16)).normalized);
+
+        print_matrix(ViewingMatrix);
+
+        List<Vector3> Image_after_Viewing = get_image(image_after_all, ViewingMatrix);
+
+        print_verts(Image_after_Viewing);
+
+        Matrix4x4 ProjectionMatrix = Matrix4x4.Perspective(120, 1, 1, 1000);
+        print_matrix(ProjectionMatrix);
+
+        List<Vector3> Image_After_Projection = get_image(Image_after_Viewing, ProjectionMatrix);
+        print_verts(Image_After_Projection);
+
+        Matrix4x4 MatrixForEverything = (ProjectionMatrix * ViewingMatrix * SingleMatrix);
+        print_matrix(MatrixForEverything);
+
+        List<Vector3> Final_Image = get_image(vertices, MatrixForEverything);
+        print_verts(Final_Image);
+
+
         List<Vector3> get_image(List<Vector3> list_verts, Matrix4x4 transform_matrix)
         {
             List<Vector3> hold = new List<Vector3>();
