@@ -205,6 +205,13 @@ public class model
         List<Vector3> Final_Image = get_image(vertices, MatrixForEverything);
         print_verts(Final_Image);
 
+        List<Vector2> ProjectionByHand = new List<Vector2>();
+        foreach(Vector3 MyVector in Image_after_Viewing)
+        {
+            ProjectionByHand.Add(new Vector2(MyVector.x / MyVector.z, MyVector.y / MyVector.z));
+        }
+
+        print_2D(ProjectionByHand);
 
         List<Vector3> get_image(List<Vector3> list_verts, Matrix4x4 transform_matrix)
         {
@@ -245,6 +252,18 @@ public class model
             foreach (Vector3 v in v_list)
             {
                 writer.WriteLine(v.x.ToString() + "   ,   " + v.y.ToString() + "   ,   " + v.z.ToString() + "   ,   ");
+
+            }
+            writer.Close();
+        }
+
+         void print_2D(List<Vector2> v_list)
+        {
+            string path = "Assets/2D.txt";
+            StreamWriter writer = new StreamWriter(path, true);
+            foreach (Vector2 v in v_list)
+            {
+                writer.WriteLine(v.x.ToString() + "   ,   " + v.y.ToString());
 
             }
             writer.Close();
