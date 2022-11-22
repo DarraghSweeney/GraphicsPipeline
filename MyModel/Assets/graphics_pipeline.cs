@@ -12,7 +12,8 @@ public class graphics_pipeline : MonoBehaviour
 
     Outcode B = new Outcode(new Vector2(-2, -2));
 
-    
+    Texture2D ourScreen;
+
 
     bool line_clip( ref Vector2 start, ref Vector2 end)
     {
@@ -125,12 +126,6 @@ public class graphics_pipeline : MonoBehaviour
             }
         }
         return hold;
-
-
-
-        
-
-
     }
    
 
@@ -166,12 +161,47 @@ public class graphics_pipeline : MonoBehaviour
         return hold;
     }
 
+    private void plot(List<Vector2Int> Vlist)
+    {
+        foreach (Vector2Int v in Vlist)
+        {
+            ourScreen.SetPixel(v.x, v.y, Color.red);
+        }
+        ourScreen.Apply();
+    }
 
-    Texture2D ourScreen;
+    private Vector2Int Convert(Vector2 v)
+    {
+        return new Vector2Int((int)(511 * (v.x + 1) / 2), (int)(511 * (v.y + 1) / 2));
+    }
+
+
+  
+
+
     // Start is called before the first frame update
     void Start()
     {
-        //d = new model();
+        d = new model();
+
+        List<Vector3> verts = d.vertices;
+
+        Matrix4x4 translate = Matrix4x4.TRS(new Vector3(0, 0, 10), Quaternion.identity, Vector3.one);
+        Matrix4x4 projection = Matrix4x4.Perspective(90, 1, 0, 1000);
+
+        Matrix4x4 AllTrans = projection * translate;
+
+        List<Vector3> imageafter = d.get_image(verts, AllTrans);
+        if (ourScreen)
+            Destroy(ourScreen);
+        ourScreen = new Texture2D(512, 512);
+        
+
+
+
+
+
+
 
         Vector2 Start = new Vector2(0.5f,0.5f);
         Vector2 end = new Vector2(0, 0);
@@ -189,21 +219,6 @@ public class graphics_pipeline : MonoBehaviour
 
         
     }
-
-    private void plot(List<Vector2Int> Vlist)
-    {
-       foreach (Vector2Int v in Vlist)
-        {
-            ourScreen.SetPixel(v.x, v.y, Color.red);
-        }
-        ourScreen.Apply();
-    }
-
-    private Vector2Int Convert(Vector2 v)
-    {
-        return new Vector2Int((int)(511 * (v.x + 1) / 2), (int)(511 * (v.y + 1) / 2));
-    }
-
     // Update is called once per frame
     void Update()
     {
