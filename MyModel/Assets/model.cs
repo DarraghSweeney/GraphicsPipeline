@@ -11,9 +11,9 @@ public class model
     // Start is called before the first frame update
 
 
-    List<Vector3> vertices;
+    internal List<Vector3> vertices;
 
-    List<Vector3Int> faces;
+    internal List<Vector3Int> faces;
 
 
     public model()
@@ -213,19 +213,6 @@ public class model
 
         print_2D(ProjectionByHand);
 
-        List<Vector3> get_image(List<Vector3> list_verts, Matrix4x4 transform_matrix)
-        {
-            List<Vector3> hold = new List<Vector3>();
-
-            foreach (Vector3 v in list_verts)
-            {
-                Vector4 v2 = new Vector4(v.x, v.y, v.z, 1);
-                hold.Add(transform_matrix * v2);
-            }
-            return hold;
-
-        }
-
         void print_matrix(Matrix4x4 matrix)
         {
             string path = "Assets/test.txt";
@@ -270,9 +257,22 @@ public class model
         }
     }
 
+    internal List<Vector3> get_image(List<Vector3> list_verts, Matrix4x4 transform_matrix)
+    {
+        List<Vector3> hold = new List<Vector3>();
+
+        foreach (Vector3 v in list_verts)
+        {
+            Vector4 v2 = new Vector4(v.x, v.y, v.z, 1);
+            hold.Add(transform_matrix * v2);
+        }
+        return hold;
+
+    }
 
 
-public GameObject CreateUnityGameObject()
+
+    public GameObject CreateUnityGameObject()
 
             {
 
