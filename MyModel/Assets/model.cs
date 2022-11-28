@@ -20,7 +20,7 @@ public class model
     {   
         load_vertices();
         load_faces();
-        CreateUnityGameObject();
+       // CreateUnityGameObject();
     }
 
     private void load_faces()
