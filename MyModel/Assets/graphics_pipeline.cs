@@ -13,7 +13,8 @@ public class graphics_pipeline : MonoBehaviour
     Outcode B = new Outcode(new Vector2(-2, -2));
 
     Texture2D ourScreen;
-
+    Renderer screenPlane;
+    float z = 5, angle;
 
     bool line_clip( ref Vector2 start, ref Vector2 end)
     {
@@ -22,15 +23,15 @@ public class graphics_pipeline : MonoBehaviour
 
         Outcode inScreen = new Outcode();
 
-        if ((startOutcode * endOutcode) == inScreen)
+        if ((startOutcode + endOutcode) == inScreen)
         {
-            print("Trivial Accept");
+            //print("Trivial Accept");
             return true;
         }
 
         if ((startOutcode * endOutcode) != inScreen)
         {
-            print("Trivial Reject");
+            //print("Trivial Reject");
             return false;
         }
 
@@ -183,45 +184,60 @@ public class graphics_pipeline : MonoBehaviour
     void Start()
     {
         d = new model();
+        screenPlane = FindObjectOfType<Renderer>();
 
-        List<Vector3> verts = d.vertices;
-
-        Matrix4x4 translate = Matrix4x4.TRS(new Vector3(0, 0, 10), Quaternion.identity, Vector3.one);
-        Matrix4x4 projection = Matrix4x4.Perspective(90, 1, 0, 1000);
-
-        Matrix4x4 AllTrans = projection * translate;
-
-        List<Vector3> imageafter = d.get_image(verts, AllTrans);
-        if (ourScreen)
-            Destroy(ourScreen);
-        ourScreen = new Texture2D(512, 512);
-        
-
-
-
-
-
-
-
-        Vector2 Start = new Vector2(0.5f,0.5f);
-        Vector2 end = new Vector2(0, 0);
-       // line_clip(ref Start, ref end);
-
-
-        ourScreen = new Texture2D(512, 512);
-        Renderer screenPlane = FindObjectOfType<Renderer>();
-        screenPlane.material.mainTexture = ourScreen;
-
-        if (line_clip(ref Start, ref end))
-        {
-            plot(Bresh(Convert(Start), Convert(end)));
-        }
-
+       
         
     }
     // Update is called once per frame
     void Update()
     {
-     
+        List<Vector3> verts = d.vertices;
+
+        Matrix4x4 translate = Matrix4x4.TRS(new Vector3(0, 0, 10), Quaternion.identity, Vector3.one);
+        Matrix4x4 rotate = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(angle, Vector3.right), Vector3.one);
+        Matrix4x4 projection = Matrix4x4.Perspective(90, 1, 0, 1000);
+        z += 0.05f;
+        angle++;
+
+        Matrix4x4 AllTrans = projection * rotate * translate;
+
+        List<Vector3> imageafter = d.get_image(verts, AllTrans);
+        if (ourScreen)
+            Destroy(ourScreen);
+        ourScreen = new Texture2D(512, 512);
+        screenPlane.material.mainTexture = ourScreen;
+
+        foreach (Vector3Int face in d.faces)
+        {
+            drawline(imageafter[face.x], imageafter[face.y]);
+
+            drawline(imageafter[face.y], imageafter[face.z]);
+
+            drawline(imageafter[face.z], imageafter[face.x]);
+        }
+
+        ourScreen.Apply();
+    }
+
+
+
+
+    private void drawline(Vector3 v13dH, Vector3 v23dH)
+    {
+       // print(v13dH.ToString());
+
+        if((v13dH.z < 0) && (v23dH.z < 0))
+        {
+            Vector2 v1 = new Vector2(v13dH.x / v13dH.z, v13dH.y / v13dH.z);
+            Vector2 v2 = new Vector2(v23dH.x / v23dH.z, v23dH.y / v23dH.z);
+            if(line_clip(ref v1, ref v2))
+            {
+                //print("Line from " + v1.ToString() + " to " + v2.ToString());
+                plot(Bresh(Convert(v1), (Convert(v2))));
+            }
+        }
     }
 }
+
+
